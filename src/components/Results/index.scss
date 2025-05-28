@@ -1,0 +1,28 @@
+.results {
+  margin-top: 100px;
+  display: flex;
+  justify-content: space-evenly;
+
+  &-rounds {
+    border: 2px solid gray;
+    height: 300px;
+    width: fit-content;
+    overflow-x: hidden;
+    overflow-y: scroll;
+
+    &-round {
+
+      span {
+        display: flex;
+        justify-content: space-between;
+
+        &.won { background: rgba(0, 255, 0, .25); }
+        &.lost { background: rgba(215, 0, 0, .25); }
+        // padding: .5rem;
+        & > span {
+          padding: .5rem;
+        }
+      }
+    }
+  }
+}

@@ -1,14 +1,11 @@
 .doors {
-  position: absolute;
-  top: 100px;
-  left: 100px;
-  width: calc(100% - 200px);
   height: 300px;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: space-evenly;
   align-items: flex-start;
+  gap: 20px;
 
   &-door {
     position: relative;
@@ -25,6 +22,7 @@
     h1 {
       position: absolute;
       top: 100%;
+      font-size: 20px;
     }
 
     p {
@@ -37,10 +35,10 @@
       top: 0;
       left: 0;
       height: 100%;
-      width: 90%;
+      width: 100%;
       background: rgba(150, 20, 40, .5);
-      backdrop-filter: blur(10px);
-      transition: width 1s;
+      backdrop-filter: blur(6px);
+      transition: width .1s;
     }
 
     &.open {
