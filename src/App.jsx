@@ -19,9 +19,11 @@ function App() {
   const doors = useRef([]);
   const results = useRef([]);
   const playInterval = useRef();
+  const roundCount = useRef(0);
 
   const startRound = async () => {
-    setCurrentAction('start a new round');
+    roundCount.current += 1;
+    setCurrentAction(`Round ${roundCount.current}`);
     return new Promise(resolve => {
       doors.current = shuffle(
         Array.from({ length: amountHidden }, (_, i) => ({
@@ -45,20 +47,17 @@ function App() {
   };
 
   const revealNonWinning = async () => {
-    setCurrentAction(`reveal ${amountRevealed} non-winning doors`);
+    setCurrentAction(`open ${amountRevealed} non-winning door${amountRevealed > 1 ? 's' : ''}`);
     return new Promise(resolve => {
-      let revealed = 0;
-      while (revealed < amountRevealed) {
-        let doorToOpen = Math.floor(Math.random() * amountHidden);
-        while (
-          doors.current[doorToOpen].hasPrize ||
-          doorToOpen === selected.current
-        ) {
-          doorToOpen = Math.floor(Math.random() * amountHidden);
-        }
-        doors.current[doorToOpen].open = true;
-        revealed++;
-      }
+      let eligibleDoors = doors.current
+        .map((door, index) => ({ ...door, index }))
+        .filter((door, index) => !door.hasPrize && !door.open && index !== selected.current);
+
+      eligibleDoors = shuffle(eligibleDoors).slice(0, amountRevealed);
+
+      eligibleDoors.forEach(({ index }) => {
+        doors.current[index].open = true;
+      });
       setTimeout(resolve, speed || 50);
     });
   };
@@ -81,7 +80,7 @@ function App() {
   };
 
   const finishRound = async () => {
-    setCurrentAction('ending round:');
+    setCurrentAction('open all the doors:');
     return new Promise(resolve => {
       doors.current.forEach(d => (d.open = true));
       const didWin = doors.current[selected.current]?.hasPrize;
@@ -138,14 +137,14 @@ function App() {
             const newAmt = Number(e.target.value);
             setAmountHidden(newAmt);
             if (amountRevealed >= newAmt) {
-              setAmountRevealed(newAmt - 1);
+              setAmountRevealed(newAmt - 2);
             }
           }}
           />
         </div>
         <div>
           <label>Doors Revealed: {amountRevealed}</label>
-          <input type="range" min={1} max={amountHidden - 1} step={1} value={amountRevealed} onChange={e => setAmountRevealed(Number(e.target.value))} />
+          <input type="range" min={1} max={amountHidden - 2} step={1} value={amountRevealed} onChange={e => setAmountRevealed(Number(e.target.value))} />
         </div>
         <button onClick={() => setIsRunning(running => !running)}>
           {isRunning ? 'Pause' : 'Start'}
